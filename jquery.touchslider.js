@@ -1,10 +1,11 @@
 /*
-TouchSlider 0.9
+TouchSlider 0.95
 Licensed under the MIT license.
 http://touchslider.com
 */
 /*jslint browser: true, undef: true, sloppy: true, vars: true, white: true, nomen: true, plusplus: true, maxerr: 50, indent: 4 */
 /*global WebKitCSSMatrix: false, jQuery: false, getComputedStyle: false */
+
 (function($, undefined) {
 	window.touchSlider = function(options) {
 		options = options || {};
@@ -19,7 +20,7 @@ http://touchslider.com
 		}
 
 		options = $.extend({
-				autoPlay: false,
+				autoplay: false,
 				delay: 3000,
 				margin: 5,
 				viewport: "." + namespace + "-viewport",
@@ -36,7 +37,9 @@ http://touchslider.com
 				current: 0,
 				step: step,
 				next: next,
-				prev: prev
+				prev: prev,
+				start: start,
+				stop: stop
 			},
 			isTouchWebkit = "ontouchstart" in window && "WebKitCSSMatrix" in window,
 			touchstart = "touchstart", touchmove = "touchmove", touchend = "touchend",
@@ -118,7 +121,7 @@ http://touchslider.com
 					if (toIndex >= slides.length) {
 						toIndex = 0;
 					} else if (toIndex < 0){
-						 toIndex = slides.length - 1;
+						toIndex = slides.length - 1;
 					}
 					var duration = options.duration,
 						node = slides.eq(toIndex),
@@ -417,18 +420,27 @@ http://touchslider.com
 		}
 
 		/* Autoplay */
-		var autoPlayTimeout, mouseInViewport = false;
-		if (options.autoPlay) {
-			viewport.hover(function() {
-					clearTimeout(autoPlayTimeout);
-					mouseInViewport = true;
-				}, function() {
-					mouseInViewport = false;
-					autoPlay();
-			});
-		}
+		var mouseInViewport = false,
+			isPlay = false,
+			autoPlayTimeout;
+
+		viewport.hover(function() {
+				clearTimeout(autoPlayTimeout);
+				mouseInViewport = true;
+			}, function() {
+				mouseInViewport = false;
+				autoPlay();
+		});
+
 		function autoPlay() {
-			if (options.autoPlay && !mouseInViewport) {
+			if (isPlay) {
+				start();
+			}
+		}
+
+		function start() {
+			isPlay = true;
+			if (!mouseInViewport) {
 				clearTimeout(autoPlayTimeout);
 				autoPlayTimeout = setTimeout(function() {
 					if (!switching.moving && !mouseInViewport) {
@@ -436,6 +448,13 @@ http://touchslider.com
 					}
 				}, options.delay);
 			}
+			return options.container;
+		}
+
+		function stop() {
+			clearTimeout(autoPlayTimeout);
+			isPlay = false;
+			return options.container;
 		}
 
 		/* Navigation */
@@ -609,7 +628,9 @@ http://touchslider.com
 			initTouch();
 		}
 
-		autoPlay();
+		if (options.autoplay) {
+			start();
+		}
 
 		container.data(namespace, ret);
 	};
@@ -619,5 +640,5 @@ http://touchslider.com
 		options.container = this;
 		touchSlider(options);
 		return this;
-	}
+	};
 }(jQuery));
