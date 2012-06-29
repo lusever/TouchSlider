@@ -29,10 +29,11 @@ http://touchslider.com
 				pagination: "." + namespace + "-nav-item",
 				currentClass: namespace + "-nav-item-current",
 				duration: 350,
-				mouseTouch: true
+				mouseTouch: true,
+				page: 0
 				// [container, scroller]
 			}, options);
-
+		
 		var ret = {
 				current: 0,
 				step: step,
@@ -191,7 +192,7 @@ http://touchslider.com
 
 							// right calc, [3,4]
 							var leftInR = nodeLeft;
-							
+
 							for (i = indexInViewport + 1; i < l; i++) {
 								leftInR += slides.eq(inViewport[i]).outerWidth() + options.margin;
 								endCoords[i] = leftInR;
@@ -631,6 +632,10 @@ http://touchslider.com
 		if (options.autoplay) {
 			start();
 		}
+		
+		if(options.page){
+			step(options.page);
+		}
 
 		container.data(namespace, ret);
 	};
@@ -642,3 +647,4 @@ http://touchslider.com
 		return this;
 	};
 }(jQuery));
+
