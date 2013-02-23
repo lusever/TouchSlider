@@ -120,11 +120,17 @@ http://touchslider.com
 				to: function(toIndex, opt) {
 					opt = opt || {};
 					if (toIndex >= slides.length) {
-						if(options.continuous){ toIndex = 0; }
-						else { return false; }
+						if(options.continuous){
+							toIndex = 0;
+						} else { 
+							return false; 
+						}
 					} else if (toIndex < 0){
-						if(options.continuous){ toIndex = slides.length - 1; }
-						else { return false; }
+						if(options.continuous){
+							toIndex = slides.length - 1;
+						} else { 
+							return false; 
+						}
 					}
 					var duration = options.duration,
 						node = slides.eq(toIndex),
