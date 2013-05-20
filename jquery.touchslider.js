@@ -573,7 +573,7 @@ http://touchslider.com
 							return;
 						}
 
-						if ($.browser.msie) {
+						if (/msie/.test(navigator.userAgent.toLowerCase())) {
 							e.preventDefault();
 						}
 					}
