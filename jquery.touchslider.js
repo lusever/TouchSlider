@@ -399,6 +399,9 @@ http://touchslider.com
 		function changedView(index) {
 			pagination.removeClass(options.currentClass)
 				.eq(index).addClass(options.currentClass);
+			if (options.onSlideComplete) { 
+				options.onSlideComplete(index); 
+			}
 		}
 
 		// set item or next
