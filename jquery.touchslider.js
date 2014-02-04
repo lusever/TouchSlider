@@ -29,7 +29,8 @@ http://touchslider.com
 				pagination: "." + namespace + "-nav-item",
 				currentClass: namespace + "-nav-item-current",
 				duration: 350,
-				mouseTouch: true
+				mouseTouch: true,
+				callback: function() {}
 				// [container, scroller]
 			}, options);
 
@@ -399,6 +400,7 @@ http://touchslider.com
 		function changedView(index) {
 			pagination.removeClass(options.currentClass)
 				.eq(index).addClass(options.currentClass);
+			options.callback.call(this, index);
 		}
 
 		// set item or next
