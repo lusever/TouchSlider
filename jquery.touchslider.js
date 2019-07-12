@@ -133,12 +133,13 @@ http://touchslider.com
 
 					switching.moving = true;
 					clearTimeout(autoPlayTimeout);
-
+					
 					if (indexInViewport !== -1) {
 						nodeLeft = endCoords[indexInViewport];
 					// add node if not exist
 					} else {
 						var i, nodeIndex = slides.index(node);
+						
 						// set position in viewport
 						indexInViewport = undefined;
 
@@ -166,11 +167,11 @@ http://touchslider.com
 
 						// set start coordinates
 						if (indexInViewport === 0) {
-							nodeLeft = endCoords[1] - (node.outerWidth() + options.margin);
+							nodeLeft = opt.dirX == -1 ? endCoords[1] - (node.outerWidth() + options.margin) : crossLeft(node);
 							crossLeft(node, nodeLeft);
 							endCoords[indexInViewport] = nodeLeft;
 						} else if (indexInViewport === inViewport.length - 1) {
-							nodeLeft = endCoords[indexInViewport - 1] + slides.eq(inViewport[indexInViewport - 1]).outerWidth() + options.margin;
+							nodeLeft = opt.dirX == 1 ? endCoords[indexInViewport - 1] + slides.eq(inViewport[indexInViewport - 1]).outerWidth() + options.margin : crossLeft(node);
 							crossLeft(node, nodeLeft);
 							endCoords[indexInViewport] = nodeLeft;
 						} else {
@@ -288,7 +289,7 @@ http://touchslider.com
 					// add slide to left
 					if (diffX > 0) {
 						// while is used in case of fast moving
-						while (inViewport[0] !== 0 && scrollerLeft + endCoords[0] + diffX > options.margin) {
+						while (scrollerLeft + endCoords[0] + diffX > options.margin) {
 							add = slides.eq(inViewport[0] - 1); // or "first.index() - 1"
 							addLeft = endCoords[0] - add.outerWidth() - options.margin;
 							crossLeft(add, addLeft);
@@ -298,20 +299,12 @@ http://touchslider.com
 							first = add;
 						}
 					}
-					// deceleration in left
-					if ((
-						    (diffX > 0 && scrollerLeft + endCoords[0] + diffX > 0)
-						 || (diffX < 0 && scrollerLeft + endCoords[0] > 0)
-						) && inViewport[0] === 0
-					) {
-						deceleration = Math.min(Math.round((switching.leftCount + endCoords[0]) / 4), viewport.innerWidth() / 2);
-						diffX = deceleration - (scrollerLeft + endCoords[0]);
-					}
 
 					// add slide to right
 					if (diffX < 0) {
-						while (!last.is(slides.last()) && scrollerLeft + endCoords[lastIndex] + diffX + last.outerWidth() + options.margin < viewport.innerWidth()) {
-							add = slides.eq(inViewport[lastIndex] + 1);
+						//while (!last.is(slides.last()) && scrollerLeft + endCoords[lastIndex] + diffX + last.outerWidth() + options.margin < viewport.innerWidth()) {
+						while (scrollerLeft + endCoords[lastIndex] + diffX + last.outerWidth() + options.margin < viewport.innerWidth()) {
+							add = !last.is(slides.last()) ? slides.eq(inViewport[lastIndex] + 1) : slides.eq(0);
 							addLeft = endCoords[lastIndex] + last.outerWidth() + options.margin;
 							crossLeft(add, addLeft);
 							endCoords.push(addLeft);
@@ -319,16 +312,7 @@ http://touchslider.com
 							last = add;
 						}
 					}
-					// deceleration in right
-					if ((
-						    (diffX > 0 && scrollerLeft + endCoords[lastIndex] < 0)
-						 || (diffX < 0 && scrollerLeft + endCoords[lastIndex] + diffX < 0)
-						) && last.is(slides.last())
-					) {
-						deceleration = Math.max(Math.round((switching.leftCount + endCoords[lastIndex]) / 4), - viewport.innerWidth() / 2);
-						diffX = deceleration - (scrollerLeft + endCoords[lastIndex]);
-					}
-
+					
 					crossLeft(scroller, scrollerLeft + diffX);
 				},
 
